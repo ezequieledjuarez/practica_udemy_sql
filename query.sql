@@ -274,3 +274,25 @@ FROM customer
 GROUP BY 
     store_id
 ORDER BY store_id;
+
+-- 79 Inner Join ej
+
+SELECT * FROM rental
+	INNER JOIN	customer
+    ON rental.customer_id = customer.customer_id;
+
+SELECT DISTINCT 
+rental.rental_id
+FROM inventory
+	INNER JOIN rental
+    ON inventory.inventory_id = rental.inventory_id
+LIMIT 5000;
+
+-- Can you pull for me a list of each film we have in inventory?
+-- I would like to see the film's title, description, and the store_id value associated with each items, and its inventory_id. Thanks!
+
+SELECT
+inventory.inventory_id, inventory.store_id, title, description 
+FROM inventory
+	INNER JOIN  film ON inventory.inventory_id = film.inventory_id
+    INNER JOIN  store ON inventory.store_id = store.store_id
