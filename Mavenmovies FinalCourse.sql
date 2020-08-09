@@ -4,32 +4,38 @@ Please send over the managers’ names at each store, with the full address
 of each property (street address, district, city, and country please).  
 */ 
 
+SELECT 
+	staff.store_id,
+	staff.first_name,
+    staff.last_name,
+	address.address,
+    address.district,
+    city.city,
+    country.country
+FROM staff
+	INNER JOIN address
+		ON staff.address_id = address.address_id
+	INNER JOIN city
+		ON address.city_id = city.city_id
+	INNER JOIN country
+		ON city.country_id = country.country_id;
 
-
-
-
-
-
-
-
-	
 /*
 2.	I would like to get a better understanding of all of the inventory that would come along with the business. 
 Please pull together a list of each inventory item you have stocked, including the store_id number, 
 the inventory_id, the name of the film, the film’s rating, its rental rate and replacement cost. 
 */
 
-
-
-
-
-
-
-
-
-
-
-
+SELECT
+	inventory.store_id,
+	inventory.inventory_id,
+    film.title,
+	film.rating,
+    film.rental_rate,
+    film.replacement_cost
+FROM inventory
+	INNER JOIN film
+		ON inventory.film_id = film.film_id;
 
 
 /* 
@@ -37,16 +43,18 @@ the inventory_id, the name of the film, the film’s rating, its rental rate and
 of your inventory. We would like to know how many inventory items you have with each rating at each store. 
 */
 
-
-
-
-
-
-
-
-
-
-
+SELECT
+	inventory.store_id,
+	inventory.inventory_id,
+    film.title,
+	film.rating,
+    film.rental_rate,
+    film.replacement_cost,
+COUNT(film.rental_rate)
+FROM inventory
+	INNER JOIN film
+		ON inventory.film_id = film.film_id
+GROUP BY film.rental_rate, film.title;
 
 
 /* 
@@ -56,6 +64,20 @@ We would like to see the number of films, as well as the average replacement cos
 sliced by store and film category. 
 */ 
 
+SELECT 
+	COUNT(category.category_id) AS category_id,
+    category.name,
+    inventory.store_id,
+    AVG(film.replacement_cost),
+    SUM(film.replacement_cost)
+    FROM inventory
+	INNER JOIN category
+		ON inventory.film_id = 	category.category_id
+	INNER JOIN film_category
+		ON film_category.category_id = category.category_id
+	INNER JOIN film
+		ON film.film_id = film_category.film_id
+GROUP BY inventory.store_id, category.category_id;
 
 
 

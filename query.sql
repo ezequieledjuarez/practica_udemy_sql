@@ -292,7 +292,172 @@ LIMIT 5000;
 -- I would like to see the film's title, description, and the store_id value associated with each items, and its inventory_id. Thanks!
 
 SELECT
-inventory.inventory_id, inventory.store_id, title, description 
+	inventory_id, 
+    store_id, 
+    title, 
+    description 
 FROM inventory
-	INNER JOIN  film ON inventory.inventory_id = film.inventory_id
-    INNER JOIN  store ON inventory.store_id = store.store_id
+	INNER JOIN  film 
+		ON inventory.film_id = film.film_id;
+        
+-- Looking for a films in which actors appeared
+
+SELECT 
+	actor.first_name,
+    actor.last_name,
+    COUNT(film_actor.film_id) AS number_of_films
+FROM actor
+	LEFT JOIN film_actor
+		ON actor.actor_id = film_actor.actor_id
+	GROUP BY
+		actor.first_name,
+        actor.last_name;
+        
+SELECT DISTINCT 
+	inventory.inventory_id,
+    rental.inventory_id
+FROM inventory 
+	LEFT JOIN rental
+		ON inventory.inventory_id = rental.inventory_id
+LIMIT 5000;
+
+-- Can you pull a list of all titles, and figure out how many actores are asociated with each title?
+
+SELECT 
+	film.title,
+    COUNT(film_actor.actor_id) AS number_of_actors
+FROM film
+LEFT JOIN film_actor
+	ON film_actor.film_id = film.film_id
+GROUP BY 
+	film.film_id;
+
+-- LEFT VS INNER VS RIGHT
+    
+SELECT
+	actor.actor_id,
+    actor.first_name AS actor_first,
+    actor.last_name AS actor_last,
+    actor_award.first_name AS award_first,
+    actor_award.last_name AS award_last,
+    actor_award.awards
+FROM actor
+	LEFT JOIN actor_award
+		ON actor.actor_id = actor_award.actor_id
+	ORDER BY actor_id;
+
+SELECT
+	actor.actor_id,
+    actor.first_name AS actor_first,
+    actor.last_name AS actor_last,
+    actor_award.first_name AS award_first,
+    actor_award.last_name AS award_last,
+    actor_award.awards
+FROM actor
+	INNER JOIN actor_award
+		ON actor.actor_id = actor_award.actor_id
+	ORDER BY actor_id;
+    
+SELECT
+	actor.actor_id,
+    actor.first_name AS actor_first,
+    actor.last_name AS actor_last,
+    actor_award.first_name AS award_first,
+    actor_award.last_name AS award_last,
+    actor_award.awards
+FROM actor
+	RIGHT JOIN actor_award
+		ON actor.actor_id = actor_award.actor_id
+	ORDER BY actor_id;
+    
+-- FULL JOIN
+
+SELECT
+	film.film_id,
+    film.title,
+    category.name
+FROM film
+	INNER JOIN film_category
+		ON film.film_id = film_category.film_id
+	INNER JOIN category
+		ON film_category.category_id = category.category_id;
+        
+-- It would be great to have a list of all actor, with each title that they appear in 
+-- Could you please pull that for me?
+
+SELECT 
+	actor.first_name AS actor_first_name,
+    actor.last_name AS actor_last_name,
+    film.title AS film_title
+FROM actor 
+	INNER JOIN film_actor
+		ON actor.actor_id = film_actor.actor_id
+	INNER JOIN film 
+		ON film.film_id = film_actor.film_id
+ORDER BY actor.last_name, actor.first_name;
+
+-- Multi conditions joins
+SELECT
+	film.film_id,
+    film.title,
+    film.rating,
+    category.name
+FROM film
+	INNER JOIN film_category
+		ON film.film_id = film_category.film_id
+	INNER JOIN category
+		ON film_category.category_id = category.category_id
+WHERE category.name = 'horror'
+ORDER BY film_id;
+
+SELECT
+film.film_id,
+    film.title,
+    film.rating,
+    category.name
+FROM film
+	INNER JOIN film_category
+		ON film.film_id = film_category.film_id
+	INNER JOIN category
+		ON film_category.category_id = category.category_id
+		AND category.name = 'horror'
+ORDER BY film_id;
+
+
+-- Could you pull a list of distinct titles and their descriptions currently available in inventory at store 2?
+SELECT DISTINCT 
+	film.title,
+    film.description
+FROM film
+    INNER JOIN inventory
+		ON inventory.film_id = film.film_id
+	AND inventory.store_id = 2;
+    
+-- UNION
+SELECT
+	'advisor' as type,
+    first_name,
+    last_name
+FROM advisor
+UNION
+SELECT 
+	'investor' as type,
+    first_name,
+    last_name
+FROM investor;
+
+-- Could you pull one list of all staff and advisor names,
+-- and include a column nothing wheter they are a staff member or advisor? Thanks!
+
+SELECT 
+	'advisor' AS type,
+    first_name,
+    last_name
+FROM advisor
+UNION
+SELECT 
+	'staff' AS type,
+    first_name,
+    last_name
+FROM staff;
+    
